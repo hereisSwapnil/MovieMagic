@@ -3,15 +3,20 @@ import parse from "html-react-parser";
 import emailjs from "emailjs-com";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import Notification from "../components/Notification/Notification";
 
 export const MovieDetail = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     date: "",
     time: "",
   });
+
+  const [text, setText] = useState("");
+  const [type, setType] = useState("");
 
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
@@ -43,6 +48,7 @@ export const MovieDetail = () => {
   };
 
   const handleSubmit = (e) => {
+    setSubmitting(true);
     e.preventDefault();
     const templateParams = {
       name: formData.name,
@@ -63,10 +69,28 @@ export const MovieDetail = () => {
       .then(
         (response) => {
           console.log("Email sent successfully", response);
+          setText("Booking Confirmed");
+          setType("success");
           closeModal();
+          setSubmitting(false);
+          setFormData({
+            name: "",
+            email: "",
+            date: "",
+            time: "",
+          });
         },
         (error) => {
+          setText("Booking Failed");
+          setType("error");
           console.error("Email could not be sent", error);
+          setSubmitting(false);
+          setFormData({
+            name: "",
+            email: "",
+            date: "",
+            time: "",
+          });
         }
       );
   };
@@ -165,6 +189,7 @@ export const MovieDetail = () => {
       ) : (
         ""
       )}
+      <Notification message={text} type={type} />
       <div className="flex flex-col md:flex-row mx-auto px-10 my-10 gap-6">
         <img
           src={movie.image.original}
@@ -241,7 +266,12 @@ export const MovieDetail = () => {
             </label>
             <button
               type="submit"
-              className="bg-blue-900 py-2 px-3 cursor-pointer rounded-xl text-white hover:bg-blue-800"
+              className={`py-2 px-3 ${
+                submitting
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-blue-900 hover:bg-blue-800 cursor-pointer"
+              } rounded-xl text-white `}
+              disabled={submitting ? true : false}
             >
               Confirm Booking
             </button>
