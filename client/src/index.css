@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.pagination-link {
+  border: 1px solid #172554;
+  color: #172554;
+  padding: 0.5rem;
+  margin: 0 0.2rem;
+  cursor: pointer;
+}
+
+.pagination-link:hover {
+  background-color: #172554;
+  color: #fff;
+}
+
+.pagination-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.pagination-previous,
+.pagination-next {
+  border: 1px solid #172554;
+  color: #172554;
+  padding: 0.5rem;
+  margin: 0 0.2rem;
+  cursor: pointer;
+}
+
+.pagination-previous:hover,
+.pagination-next:hover {
+  background-color: #172554;
+  color: #fff;
+}
+
+.active a {
+  color: #fff;
+  background-color: #1e40af;
+}

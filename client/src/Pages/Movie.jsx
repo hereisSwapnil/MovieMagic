@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import { MovieCard } from "../components/MovieCard/MovieCard";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import ReactPaginate from "react-paginate";
 
 export const Movie = () => {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const itemsPerPage = 12;
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query");
   console.log(query);
@@ -14,6 +18,7 @@ export const Movie = () => {
       axios.get("https://api.tvmaze.com/shows").then((res) => {
         console.log(res.data);
         setMovies(res.data);
+        setTotalPages(Math.ceil(res.data.length / itemsPerPage));
       });
     } else {
       axios
@@ -24,6 +29,14 @@ export const Movie = () => {
         });
     }
   }, [query]);
+
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const subset = movies.slice(startIndex, endIndex);
+
+  const handlePageChange = (selectedPage) => {
+    setCurrentPage(selectedPage.selected);
+  };
 
   if (movies.length === 0) {
     return (
@@ -113,13 +126,32 @@ export const Movie = () => {
       <div className="flex justify-center">
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
           {movies.length > 0 &&
-            movies.map((movie) => (
+            subset.map((movie) => (
               <MovieCard
                 key={query ? movie.show.id : movie.id}
                 movie={query ? movie.show : movie}
               />
             ))}
         </div>
+      </div>
+      <div>
+        {/* {subset.map((item) => (
+          <div key={item.id}>{item.title}</div>
+        ))} */}
+        <ReactPaginate
+          pageCount={totalPages}
+          onPageChange={handlePageChange}
+          forcePage={currentPage}
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          pageRangeDisplayed={2}
+          marginPagesDisplayed={3}
+          pageLinkClassName="pagination-link"
+          containerClassName="pagination-container"
+          previousLinkClassName="pagination-previous"
+          nextLinkClassName="pagination-next"
+          activeClassName="active"
+        />
       </div>
     </>
   );

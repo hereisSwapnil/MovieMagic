@@ -50,12 +50,26 @@ export const MovieDetail = () => {
   const handleSubmit = (e) => {
     setSubmitting(true);
     e.preventDefault();
+    var data = {
+      name: formData.name,
+      email: formData.email,
+      date: formData.date,
+      time: formData.time,
+      movieName: movie.name,
+    };
+
+    var jsonData = JSON.stringify(data);
+    var encodedData = encodeURIComponent(jsonData);
+    var qrCodeUrl =
+      "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
+      encodedData;
     const templateParams = {
       name: formData.name,
       email: formData.email,
       date: formData.date,
       time: formData.time,
       movieName: movie.name,
+      qrCodeUrl: qrCodeUrl,
     };
     console.log(templateParams);
 
